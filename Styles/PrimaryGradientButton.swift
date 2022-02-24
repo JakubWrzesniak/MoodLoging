@@ -21,5 +21,6 @@ struct PrimaryGradientButton: ButtonStyle {
             .background(LinearGradient(gradient: Gradient(colors: [primaryColor, secondaryColor]), startPoint: .leading, endPoint: .trailing))
             .cornerRadius(10)
             .padding(.horizontal)
+            .scaleEffect(configuration.isPressed ? 0.9 : 1.0)
     }
 }

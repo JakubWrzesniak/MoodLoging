@@ -12,6 +12,8 @@ struct LoginView: View {
     @EnvironmentObject var authenticator: Authenticator
     @ObservedObject private var userLoginViewModel = UserLoginViewModel()
     @Binding var currentPage: StartingPages
+    @State var isLoading = false
+    @State var errorMessage = ""
     
     var body: some View {
         VStack{
@@ -23,8 +25,8 @@ struct LoginView: View {
             Group{
                 FormField(fieldName: "Username", fieldValue: $userLoginViewModel.username, isSecure: false)
                 FormField(fieldName: "Password", fieldValue: $userLoginViewModel.password, isSecure: true)
-                if ((authenticator.error_description?.isEmpty) != nil) {
-                    RequirementText(iconColor: Color(red: 251/255, green: 128/255, blue: 128/255), text: authenticator.error_description!, isStrikeThrought: false)
+                if (!errorMessage.isEmpty) {
+                    RequirementText(iconColor: Color(red: 251/255, green: 128/255, blue: 128/255), text: errorMessage, isStrikeThrought: false)
                 }
             }
             .padding()
@@ -33,10 +35,25 @@ struct LoginView: View {
             
             if(isButtonActive){
                 Button(action: {
-                    authenticator.login(username: userLoginViewModel.username, password: userLoginViewModel.password)
+                    isLoading = true
+                    Task {
+                        do{
+                            try await authenticator.login(username: userLoginViewModel.username, password: userLoginViewModel.password)
+                        } catch {
+                            self.errorMessage = error.localizedDescription
+                        }
+                        isLoading = false
+                    }
                 }) {
-                    Text("Sign In")
-                        .bold()
+                    HStack{
+                        Text("Sign In")
+                            .bold()
+                        if(isLoading){
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle())
+                                .padding(.leading, 5)
+                        }
+                    }
                 }
                 .buttonStyle(PrimaryGradientButton())
             } else {
@@ -48,7 +65,6 @@ struct LoginView: View {
             }
             
             Button(action: {
-                authenticator.error_description = nil
                 currentPage = .registerPage
             }) {
                 Text("Sign Up")

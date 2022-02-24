@@ -12,6 +12,8 @@ struct RegisterView: View {
     @EnvironmentObject var authenticator: Authenticator
     @ObservedObject private var userRegistrationModelView = UserRegistartionViewModel()
     @Binding var currentPage: StartingPages
+    @State var isLoading = false
+    @State var errorMessage = ""
     
     var body: some View {
         VStack{
@@ -39,8 +41,8 @@ struct RegisterView: View {
             FormField(fieldName: "Confirm Password", fieldValue: $userRegistrationModelView.passwordConfirmed, isSecure: true)
             VStack{
                 RequirementText(iconName: userRegistrationModelView.isPasswordConfirmValid ? "checkmark.square" : "xmark.square", iconColor: userRegistrationModelView.isPasswordConfirmValid ? .green : Color("Danger"), text: "Your confirm password should be the same as the password", isStrikeThrought: userRegistrationModelView.isPasswordConfirmValid)
-                if ((authenticator.error_description?.isEmpty) != nil) {
-                    RequirementText(iconColor: Color("Danger"), text: authenticator.error_description!)
+                if !errorMessage.isEmpty {
+                    RequirementText(iconColor: Color("Danger"), text: errorMessage)
                 }
             }
             .padding()
@@ -48,13 +50,26 @@ struct RegisterView: View {
             
             if(userRegistrationModelView.areAllContraintMet()){
                 Button(action: {
-                    authenticator.register(username: userRegistrationModelView.username, password: userRegistrationModelView.password)
-                    if((authenticator.error_description?.isEmpty) != nil){
-                        authenticator.login(username: userRegistrationModelView.username, password: userRegistrationModelView.password)
+                    isLoading = true
+                    Task{
+                        do{
+                            try await authenticator.register(username: userRegistrationModelView.username, password: userRegistrationModelView.password)
+                            try await authenticator.login(username: userRegistrationModelView.username, password: userRegistrationModelView.password)
+                        } catch {
+                            self.errorMessage = error.localizedDescription
+                        }
+                        isLoading = false
                     }
                 }) {
-                    Text("Sign Up")
-                        .bold()
+                    HStack{
+                        Text("Sign Up")
+                            .bold()
+                        if(isLoading){
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle())
+                                .padding(.leading, 5)
+                        }
+                    }
                 }
                 .buttonStyle(PrimaryGradientButton())
             } else {
@@ -66,7 +81,6 @@ struct RegisterView: View {
             }
         }
         Button(action: {
-            authenticator.error_description = nil
             currentPage = .loginPage
             
         }) {
