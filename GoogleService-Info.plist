@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>92084321100-o0d51jqv0vt024cdo4vmaunen770r7mp.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.92084321100-o0d51jqv0vt024cdo4vmaunen770r7mp</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAmltOTBWxDciQIygodJiCEq345K87Zwp8</string>
+	<key>GCM_SENDER_ID</key>
+	<string>92084321100</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.JakubWrzesniak.MoodLoging</string>
+	<key>PROJECT_ID</key>
+	<string>moodloging-81882</string>
+	<key>STORAGE_BUCKET</key>
+	<string>moodloging-81882.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:92084321100:ios:ff42231a6b3f9ec4c52de9</string>
+</dict>
+</plist>
