@@ -10,6 +10,7 @@ import CoreData
 import Firebase
 
 struct ContentView: View {
+    @EnvironmentObject var authenticator: Authenticator
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
@@ -17,22 +18,22 @@ struct ContentView: View {
     private var items: FetchedResults<Item>
     
     @State var startingPage: StartingPages = .loginPage
-    
-    @State private var currentUser = Auth.auth().currentUser
 
     
     var body: some View {
-        if let currentUser = Auth.auth().currentUser {
-            Text("Welcome \(currentUser.email ?? "Brak email")")
-            Button(action: {try? Auth.auth().signOut()}){
+        Group{
+            Text("Welcome \(Auth.auth().currentUser?.email ?? "Brak email")")
+            Button(action: {authenticator.logout()}){
                 Text("Logout")
             }
-        } else {
+        }.fullScreenCover(isPresented: $authenticator.needsAuthentication){
             switch startingPage {
-            case .loginPage:
-                LoginView(currentPage: $startingPage)
-            case .registerPage:
-                RegisterView(currentPage: $startingPage)
+                case .loginPage:
+                    LoginView(currentPage: $startingPage)
+                        .environmentObject(authenticator)
+                case .registerPage:
+                    RegisterView(currentPage: $startingPage)
+                        .environmentObject(authenticator)
             }
         }
     }
@@ -81,5 +82,6 @@ private let itemFormatter: DateFormatter = {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+            .environmentObject(Authenticator())
     }
 }

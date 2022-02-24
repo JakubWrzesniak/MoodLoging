@@ -10,6 +10,8 @@ import Firebase
 
 @main
 struct MoodLogingApp: App {
+    @StateObject var authenticator = Authenticator()
+    
     let persistenceController = PersistenceController.shared
     
     init(){
@@ -20,6 +22,7 @@ struct MoodLogingApp: App {
         WindowGroup {
             ContentView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environmentObject(authenticator)
         }
     }
 }

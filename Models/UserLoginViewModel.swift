@@ -12,21 +12,23 @@ class UserLoginViewModel: ObservableObject{
     @Published var username = ""
     @Published var password = ""
     
-    @Published var isUsernameCorrect = false
+    @Published var isUsernameLengthCorrect = false
+    @Published var isPasswordLengthCorrect = false
     
     private var cancellableSet: Set<AnyCancellable> = []
     
     init(){
         $username.receive(on: RunLoop.main)
             .map { username in
-                let pattern = "[A-Z0-9a-z.-_]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,3}"
-                if let _ = username.range(of: pattern, options: .regularExpression){
-                    return true
-                } else {
-                    return false
-                }
+                username.count > 4
             }
-            .assign(to: \.isUsernameCorrect, on: self)
+            .assign(to: \.isUsernameLengthCorrect, on: self)
+            .store(in: &cancellableSet)
+        $password.receive(on: RunLoop.main)
+            .map { password in
+                password.count > 4
+            }
+            .assign(to: \.isPasswordLengthCorrect, on: self)
             .store(in: &cancellableSet)
     }
 }

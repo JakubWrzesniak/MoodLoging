@@ -14,10 +14,14 @@ class UserRegistartionViewModel: ObservableObject{
     @Published var passwordConfirmed = ""
     
     @Published var isUsernamelengthValid = false
-    @Published var isUsernameEmailCorrect = false
+    @Published var isUsernameEmailCorrect = true
     @Published var isPasswordLengthValid = false
     @Published var isPasswordCapitalLetter = false
     @Published var isPasswordConfirmValid = false
+    
+    func areAllContraintMet() -> Bool {
+        return isUsernamelengthValid && isUsernameEmailCorrect && isPasswordLengthValid && isPasswordCapitalLetter && isPasswordConfirmValid
+    }
     
     private var cancellableSet: Set<AnyCancellable> = []
     
@@ -30,6 +34,9 @@ class UserRegistartionViewModel: ObservableObject{
         $username.receive(on: RunLoop.main)
             .map { username in
                 let pattern = "[A-Z0-9a-z.-_]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,3}"
+                if self.isUsernamelengthValid == false {
+                    return self.isUsernameEmailCorrect
+                }
                 if let _ = username.range(of: pattern, options: .regularExpression){
                     return true
                 } else {
