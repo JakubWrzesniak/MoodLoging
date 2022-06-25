@@ -7,12 +7,13 @@
 
 import Foundation
 import Combine
+import CoreData
 
-class UserRegistartionViewModel: ObservableObject{
+class UserRegistartionViewModel: ObservableObject{    
     @Published var username = ""
     @Published var password = ""
     @Published var passwordConfirmed = ""
-    
+       
     @Published var isUsernamelengthValid = false
     @Published var isUsernameEmailCorrect = true
     @Published var isPasswordLengthValid = false
@@ -73,5 +74,17 @@ class UserRegistartionViewModel: ObservableObject{
             }
             .assign(to: \.isPasswordConfirmValid, on: self)
             .store(in: &cancellableSet)
+    }
+    
+    func addNewUserToDatabase(viewContext: NSManagedObjectContext) async {
+        let newUser = UserDetails(context: viewContext)
+        let email = self.username.lowercased()
+        newUser.username = email
+        do {
+            try viewContext.save()
+        } catch {
+            let nsError = error as NSError
+            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+        }
     }
 }

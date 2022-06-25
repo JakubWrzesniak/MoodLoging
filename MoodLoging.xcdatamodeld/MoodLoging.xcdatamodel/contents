@@ -1,9 +1,50 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="false" userDefinedModelVersionIdentifier="">
-    <entity name="Item" representedClassName="Item" syncable="YES" codeGenerationType="class">
-        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19574" systemVersion="21D62" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Activities" representedClassName="Activities" syncable="YES" codeGenerationType="class">
+        <attribute name="color" optional="YES" attributeType="String"/>
+        <attribute name="icon" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="events" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Event" inverseName="activity" inverseEntity="Event"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDetails" inverseName="activites" inverseEntity="UserDetails"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="name"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="Event" representedClassName="Event" syncable="YES" codeGenerationType="class">
+        <attribute name="mood" optional="YES" attributeType="String"/>
+        <relationship name="activity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Activities" inverseName="events" inverseEntity="Activities"/>
+        <relationship name="person" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PeopleDetials" inverseName="activity" inverseEntity="PeopleDetials"/>
+        <relationship name="time" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WakingTimes" inverseName="events" inverseEntity="WakingTimes"/>
+    </entity>
+    <entity name="PeopleDetials" representedClassName="PeopleDetials" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="surname" optional="YES" attributeType="String"/>
+        <relationship name="activity" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Event" inverseName="person" inverseEntity="Event"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDetails" inverseName="people" inverseEntity="UserDetails"/>
+    </entity>
+    <entity name="UserDetails" representedClassName="UserDetails" syncable="YES" codeGenerationType="class">
+        <attribute name="username" optional="YES" attributeType="String"/>
+        <relationship name="activites" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Activities" inverseName="user" inverseEntity="Activities"/>
+        <relationship name="people" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PeopleDetials" inverseName="user" inverseEntity="PeopleDetials"/>
+        <relationship name="wakingTimes" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="WakingTimes" inverseName="user" inverseEntity="WakingTimes"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="username"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="WakingTimes" representedClassName="WakingTimes" syncable="YES">
+        <attribute name="time" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="events" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Event" inverseName="time" inverseEntity="Event"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDetails" inverseName="wakingTimes" inverseEntity="UserDetails"/>
     </entity>
     <elements>
-        <element name="Item" positionX="-63" positionY="-18" width="128" height="44"/>
+        <element name="UserDetails" positionX="280.1796875" positionY="-1804.5234375" width="128" height="103"/>
+        <element name="WakingTimes" positionX="146.01953125" positionY="-1547.18359375" width="128" height="88"/>
+        <element name="PeopleDetials" positionX="467.33984375" positionY="-1445.765625" width="128" height="103"/>
+        <element name="Activities" positionX="-51.44140625" positionY="-1852.7109375" width="128" height="118"/>
+        <element name="Event" positionX="-54.3515625" positionY="-1429.31640625" width="128" height="103"/>
     </elements>
 </model>

@@ -13,61 +13,68 @@ struct ContentView: View {
     @EnvironmentObject var authenticator: Authenticator
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
+        sortDescriptors: [],
         animation: .default)
-    private var items: FetchedResults<Item>
+    private var user: FetchedResults<UserDetails>
     
     @State var startingPage: StartingPages = .loginPage
-
     
     var body: some View {
         Group{
+            
             Text("Welcome \(Auth.auth().currentUser?.email ?? "Brak email")")
             Button(action: {authenticator.logout()}){
                 Text("Logout")
             }
+            Button(action: {authenticator.firstLogin = true}){
+                Text("Welcome")
+            }
+            .fullScreenCover(isPresented: $authenticator.firstLogin ){
+                IntroductionView(username: authenticator.user?.email ?? "Anoymus")
+                    .environmentObject(authenticator)
+            }
         }.fullScreenCover(isPresented: $authenticator.needsAuthentication){
             switch startingPage {
-                case .loginPage:
-                    LoginView(currentPage: $startingPage)
-                        .environmentObject(authenticator)
-                case .registerPage:
-                    RegisterView(currentPage: $startingPage)
-                        .environmentObject(authenticator)
+            case .loginPage:
+                LoginView(currentPage: $startingPage)
+                    .environmentObject(authenticator)
+            case .registerPage:
+                RegisterView(currentPage: $startingPage)
+                    .environmentObject(authenticator)
             }
         }
     }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            offsets.map { items[$0] }.forEach(viewContext.delete)
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
-    }
+    
+    //    private func addItem() {
+    //        withAnimation {
+    //            let newItem = Item(context: viewContext)
+    //            newItem.timestamp = Date()
+    //
+    //            do {
+    //                try viewContext.save()
+    //            } catch {
+    //                // Replace this implementation with code to handle the error appropriately.
+    //                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+    //                let nsError = error as NSError
+    //                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+    //            }
+    //        }
+    //    }
+    
+    //    private func deleteItems(offsets: IndexSet) {
+    //        withAnimation {
+    //            offsets.map { items[$0] }.forEach(viewContext.delete)
+    //
+    //            do {
+    //                try viewContext.save()
+    //            } catch {
+    //                // Replace this implementation with code to handle the error appropriately.
+    //                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+    //                let nsError = error as NSError
+    //                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+    //            }
+    //        }
+    //    }
 }
 
 enum StartingPages { case loginPage, registerPage}

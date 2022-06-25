@@ -9,6 +9,7 @@ import SwiftUI
 import Firebase
 
 struct RegisterView: View {
+    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var authenticator: Authenticator
     @ObservedObject private var userRegistrationModelView = UserRegistartionViewModel()
     @Binding var currentPage: StartingPages
@@ -54,6 +55,7 @@ struct RegisterView: View {
                     Task{
                         do{
                             try await authenticator.register(username: userRegistrationModelView.username, password: userRegistrationModelView.password)
+                            await userRegistrationModelView.addNewUserToDatabase(viewContext: viewContext)
                             try await authenticator.login(username: userRegistrationModelView.username, password: userRegistrationModelView.password)
                         } catch {
                             self.errorMessage = error.localizedDescription
